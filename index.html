@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Office Assistant — Smart Document & Meeting Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0f0f;
+    --paper: #faf8f4;
+    --accent: #2563eb;
+    --accent-light: #eff6ff;
+    --muted: #6b7280;
+    --border: #e5e0d8;
+    --card: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(250,248,244,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--ink); }
+  .logo span { color: var(--accent); }
+  nav a {
+    color: var(--muted); text-decoration: none; font-size: 0.9rem;
+    font-weight: 500; transition: color 0.2s;
+  }
+  nav a:hover { color: var(--ink); }
+  .nav-links { display: flex; gap: 32px; align-items: center; }
+  .btn-nav {
+    background: var(--ink); color: #fff !important;
+    padding: 8px 20px; border-radius: 6px;
+    font-size: 0.85rem !important;
+  }
+  .btn-nav:hover { background: var(--accent) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(37,99,235,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent-light); color: var(--accent);
+    padding: 6px 16px; border-radius: 100px;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; margin-bottom: 32px;
+  }
+  .badge::before { content: '●'; font-size: 0.5rem; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1.1; letter-spacing: -0.02em;
+    max-width: 800px; margin-bottom: 24px;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .hero-sub {
+    font-size: 1.15rem; color: var(--muted);
+    max-width: 520px; margin: 0 auto 48px;
+    font-weight: 300;
+  }
+  .hero-cta { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: #fff;
+    padding: 14px 32px; border-radius: 8px;
+    font-size: 1rem; font-weight: 600;
+    text-decoration: none; transition: all 0.2s;
+    box-shadow: 0 4px 24px rgba(37,99,235,0.25);
+  }
+  .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent; color: var(--ink);
+    padding: 14px 32px; border-radius: 8px;
+    font-size: 1rem; font-weight: 500;
+    text-decoration: none; border: 1.5px solid var(--border);
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--ink); }
+
+  /* FEATURES */
+  .section { padding: 100px 48px; max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.15; margin-bottom: 16px;
+  }
+  .section-sub { color: var(--muted); font-size: 1.05rem; max-width: 500px; }
+  .features-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px; margin-top: 64px;
+  }
+  .feature-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 36px;
+    transition: all 0.25s;
+  }
+  .feature-card:hover { border-color: var(--accent); box-shadow: 0 8px 32px rgba(37,99,235,0.08); transform: translateY(-2px); }
+  .feature-icon {
+    width: 48px; height: 48px; background: var(--accent-light);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 20px;
+  }
+  .feature-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 10px; }
+  .feature-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; }
+
+  /* PRICING */
+  .pricing-section {
+    background: var(--ink); color: #fff;
+    padding: 100px 48px; text-align: center;
+  }
+  .pricing-section .section-label { color: #60a5fa; }
+  .pricing-section .section-title { color: #fff; margin: 0 auto 16px; }
+  .pricing-section .section-sub { color: #9ca3af; margin: 0 auto 64px; }
+  .pricing-card {
+    background: #1a1a1a; border: 1px solid #2d2d2d;
+    border-radius: 20px; padding: 48px;
+    max-width: 420px; margin: 0 auto;
+    position: relative; overflow: hidden;
+  }
+  .pricing-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), #60a5fa);
+  }
+  .popular-badge {
+    display: inline-block; background: var(--accent);
+    color: #fff; font-size: 0.75rem; font-weight: 600;
+    padding: 4px 14px; border-radius: 100px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .price {
+    font-family: 'DM Serif Display', serif;
+    font-size: 4rem; color: #fff; line-height: 1;
+  }
+  .price span { font-size: 1.5rem; vertical-align: top; margin-top: 12px; display: inline-block; }
+  .price-period { color: #6b7280; font-size: 0.9rem; margin: 8px 0 32px; }
+  .price-features { list-style: none; text-align: left; margin-bottom: 36px; }
+  .price-features li {
+    padding: 10px 0; color: #d1d5db;
+    font-size: 0.95rem; border-bottom: 1px solid #2d2d2d;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .price-features li::before { content: '✓'; color: #60a5fa; font-weight: 700; }
+  .btn-pricing {
+    display: block; background: var(--accent); color: #fff;
+    padding: 16px; border-radius: 10px; font-size: 1rem;
+    font-weight: 600; text-decoration: none; text-align: center;
+    transition: all 0.2s;
+  }
+  .btn-pricing:hover { background: #1d4ed8; }
+
+  /* DIVIDER */
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 0 48px; }
+
+  /* LEGAL SECTIONS */
+  .legal-section { padding: 80px 48px; max-width: 800px; margin: 0 auto; }
+  .legal-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; margin-bottom: 24px;
+    padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  }
+  .legal-section h3 { font-size: 1.1rem; font-weight: 600; margin: 28px 0 10px; }
+  .legal-section p, .legal-section li {
+    color: var(--muted); font-size: 0.95rem;
+    line-height: 1.8; margin-bottom: 12px;
+  }
+  .legal-section ul { padding-left: 20px; }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink); color: #6b7280;
+    padding: 40px 48px; text-align: center;
+    font-size: 0.85rem;
+  }
+  footer a { color: #9ca3af; text-decoration: none; }
+  footer a:hover { color: #fff; }
+  .footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">AI<span>Office</span></div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#terms">Terms</a>
+    <a href="#pricing" class="btn-nav">Get Started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">Powered by AI</div>
+  <h1>Your <em>Smartest</em><br>Office Assistant</h1>
+  <p class="hero-sub">Write official documents, transcribe meetings, and query your knowledge base — all in seconds. Built for Chinese business users worldwide.</p>
+  <div class="hero-cta">
+    <a href="#pricing" class="btn-primary">Start for $9.9/month</a>
+    <a href="#features" class="btn-secondary">See how it works →</a>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-label">What we do</div>
+  <h2 class="section-title">Everything your office needs,<br>powered by AI</h2>
+  <p class="section-sub">Three powerful tools in one subscription. No technical skills required.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3>Document Writing Assistant</h3>
+      <p>Generate professional official documents in seconds — notices, reports, meeting minutes, and more. Just describe what you need.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎙️</div>
+      <h3>Meeting Transcription</h3>
+      <p>Upload any audio recording and get a structured meeting summary with action items, responsible persons, and deadlines automatically identified.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>Knowledge Base Q&A</h3>
+      <p>Upload your company's internal documents, policies, or manuals. Ask questions in plain language and get instant, accurate answers.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-label">Simple pricing</div>
+  <h2 class="section-title">One plan, everything included</h2>
+  <p class="section-sub">No hidden fees. Cancel anytime.</p>
+  <div class="pricing-card">
+    <div class="popular-badge">Most Popular</div>
+    <div class="price"><span>$</span>9.9</div>
+    <p class="price-period">per month, billed monthly</p>
+    <ul class="price-features">
+      <li>Unlimited document generation</li>
+      <li>Meeting transcription (up to 2hr/file)</li>
+      <li>Knowledge base (up to 50 documents)</li>
+      <li>Supports Chinese & English</li>
+      <li>Cancel anytime</li>
+    </ul>
+    <a href="mailto:contact@bigyanwang.github.io" class="btn-pricing">Get Started Now</a>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TERMS OF SERVICE -->
+<div class="legal-section" id="terms">
+  <h2>Terms of Service</h2>
+  <p>Last updated: May 2025</p>
+  <h3>1. Acceptance of Terms</h3>
+  <p>By accessing or using AI Office Assistant ("Service"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Service.</p>
+  <h3>2. Description of Service</h3>
+  <p>AI Office Assistant provides AI-powered digital productivity tools including document writing, meeting transcription, and knowledge base Q&A services.</p>
+  <h3>3. User Obligations</h3>
+  <ul>
+    <li>You must provide accurate information when creating an account.</li>
+    <li>You are responsible for maintaining the confidentiality of your account.</li>
+    <li>You agree not to use the Service for any unlawful purpose.</li>
+  </ul>
+  <h3>4. Payment Terms</h3>
+  <p>Subscriptions are billed monthly. All fees are non-refundable except as described in our Refund Policy. We reserve the right to change pricing with 30 days notice.</p>
+  <h3>5. Intellectual Property</h3>
+  <p>Content you create using the Service remains your property. You grant us a limited license to process your content solely to provide the Service.</p>
+  <h3>6. Limitation of Liability</h3>
+  <p>The Service is provided "as is" without warranties of any kind. We shall not be liable for any indirect, incidental, or consequential damages.</p>
+  <h3>7. Contact</h3>
+  <p>For questions about these terms, contact us at: bigyanwang@github.com</p>
+</div>
+
+<hr class="divider">
+
+<!-- PRIVACY POLICY -->
+<div class="legal-section" id="privacy">
+  <h2>Privacy Policy</h2>
+  <p>Last updated: May 2025</p>
+  <h3>1. Information We Collect</h3>
+  <p>We collect information you provide directly, including email address, payment information, and content you upload to use our services.</p>
+  <h3>2. How We Use Your Information</h3>
+  <ul>
+    <li>To provide and improve the Service</li>
+    <li>To process payments</li>
+    <li>To communicate with you about your account</li>
+    <li>To comply with legal obligations</li>
+  </ul>
+  <h3>3. Data Storage</h3>
+  <p>Your data is stored securely. Documents and audio files uploaded for processing are deleted after processing is complete.</p>
+  <h3>4. Third-Party Services</h3>
+  <p>We use third-party services for payment processing and AI inference. These services have their own privacy policies.</p>
+  <h3>5. Your Rights</h3>
+  <p>You may request access to, correction of, or deletion of your personal data at any time by contacting us.</p>
+  <h3>6. Contact</h3>
+  <p>For privacy inquiries: bigyanwang@github.com</p>
+</div>
+
+<hr class="divider">
+
+<!-- REFUND POLICY -->
+<div class="legal-section" id="refund">
+  <h2>Refund Policy</h2>
+  <p>Last updated: May 2025</p>
+  <h3>Monthly Subscriptions</h3>
+  <p>We offer a 7-day money-back guarantee for first-time subscribers. If you are not satisfied within the first 7 days, contact us for a full refund.</p>
+  <h3>How to Request a Refund</h3>
+  <p>Email us at bigyanwang@github.com with your account email and reason for the refund request. Refunds are processed within 5-10 business days.</p>
+  <h3>Exceptions</h3>
+  <p>Refunds are not available after 7 days from the initial purchase, or if the account has been suspended due to violation of our Terms of Service.</p>
+</div>
+
+<footer>
+  <div class="footer-links">
+    <a href="#terms">Terms of Service</a>
+    <a href="#privacy">Privacy Policy</a>
+    <a href="#refund">Refund Policy</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <p>© 2025 AI Office Assistant. All rights reserved.</p>
+</footer>
+
+</body>
+</html>
